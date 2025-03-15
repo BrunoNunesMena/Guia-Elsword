@@ -1,0 +1,26 @@
+/* Garantir que a largura da seção não ultrapasse a largura da tela */
+.section-content {
+    width: 100%;
+    box-sizing: border-box; /* Garante que padding e borda não impactem a largura */
+    margin: 0 auto; /* Para garantir centralização se a largura for menor que a tela */
+}
+
+/* Garantir que o conteúdo dentro da seção siga o layout responsivo */
+.section-content .row {
+    width: 100%;
+    display: flex;
+    justify-content: center; /* Centraliza o conteúdo horizontalmente */
+}
+
+/*Style de Siglas */
+.itens{
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between;
+}
+.itemContainer{
+    display: inline-block;
+    vertical-align: top;
+    min-width: 260px;
+    overflow: auto;
+}

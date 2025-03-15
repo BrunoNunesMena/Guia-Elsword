@@ -6,25 +6,11 @@
     <title>Guia de Elsword</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
-    <style>
-      /* Garantir que a largura da seção não ultrapasse a largura da tela */
-      .section-content {
-        width: 100%;
-        box-sizing: border-box; /* Garante que padding e borda não impactem a largura */
-        margin: 0 auto; /* Para garantir centralização se a largura for menor que a tela */
-      }
-    
-      /* Garantir que o conteúdo dentro da seção siga o layout responsivo */
-      .section-content .row {
-        width: 100%;
-        display: flex;
-        justify-content: center; /* Centraliza o conteúdo horizontalmente */
-      }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <button style="position: fixed; left: 10px; top: 10px;" class="btn btn-outline-light" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu" aria-controls="offcanvasMenu">
-    >
+  <button style="position: fixed; left: 10px; top: 10px; background-color: aliceblue; color: black;" class="btn btn-outline-light" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu" aria-controls="offcanvasMenu">
+    Menu >
   </button>
   <div class="offcanvas offcanvas-start bg-dark text-white position-fixed" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
     <div class="offcanvas-header">
@@ -54,51 +40,68 @@
 
     // Função para carregar HTML externo
     async function loadSectionContent(href) {
-      try {
+    try {
         const response = await fetch(`sections/${href}.html`);
         const htmlContent = await response.text();
-        return htmlContent; 
-      } catch (error) {
-        console.error("Erro ao carregar o conteúdo:", error);
-        return `<p>Conteúdo não encontrado!</p>`;
-      }
-    }
-
-    // Função para carregar todas as seções e exibir na ordem correta
-    async function loadAllSections() {
-      const sectionPromises = sections.map(async (section) => {
-        const content = await loadSectionContent(section.href);
-
-        // Criação da seção de conteúdo
-        const sectionHTML = `
-          <div id="${section.href}" class="row p-4 pe-lg-0 pt-lg-5 align-items-center rounded-3 border shadow-lg">
-            <div>
-              <p style="font-size: larger;" class="fw-bold text-body-emphasis">${section.title}</p>
-              <div style="min-width: 500px; overflow: auto;">
-                ${content}
-              </div>
-            </div>
-          </div>
-        `;
-
-        // Criação do item do menu
-        const menuItem = `
-          <li class="nav-item">
-            <a class="nav-link text-white" href="#${section.href}">${section.title}</a>
-          </li>
-        `;
         
-        // Adiciona ao HTML
-        menuList.innerHTML += menuItem;
+        // Criação de um container temporário para extrair scripts
+        const tempDiv = document.createElement("div");
+        tempDiv.innerHTML = htmlContent;
 
-        return sectionHTML;
+        // Remove os scripts do conteúdo e os mantém separados
+        const scripts = tempDiv.querySelectorAll("script");
+        scripts.forEach(script => script.remove());
+
+        // Retorna o HTML sem os scripts
+        return { html: tempDiv.innerHTML, scripts };
+      } catch (error) {
+          console.error("Erro ao carregar o conteúdo:", error);
+          return { html: `<p>Conteúdo não encontrado!</p>`, scripts: [] };
+      }
+  }
+
+  async function loadAllSections() {
+      const sectionPromises = sections.map(async (section) => {
+          const { html, scripts } = await loadSectionContent(section.href);
+
+          const sectionHTML = `
+              <div id="${section.href}" class="row p-4 pe-lg-0 pt-lg-5 align-items-center rounded-3 border shadow-lg">
+                  <div>
+                      <p style="font-size: 40px;" class="fw-bold text-body-emphasis">${section.title}</p>
+                      <div style="min-width: 500px; overflow: auto;">
+                          ${html}
+                      </div>
+                  </div>
+              </div>
+          `;
+
+          const menuItem = `
+              <li class="nav-item">
+                  <a class="nav-link text-white" href="#${section.href}">${section.title}</a>
+              </li>
+          `;
+
+          menuList.innerHTML += menuItem;
+
+          return { sectionHTML, scripts };
       });
 
-      // Aguarda todas as seções serem carregadas
-      const allSectionsHTML = await Promise.all(sectionPromises);
+      const allSections = await Promise.all(sectionPromises);
+      contentDiv.innerHTML = allSections.map(s => s.sectionHTML).join('');
 
-      // Agora que todas as seções foram carregadas, podemos adicionar ao conteúdo
-      contentDiv.innerHTML = allSectionsHTML.join('');
+      // Agora que o HTML foi inserido, adicionamos os scripts dinamicamente
+      allSections.forEach(({ scripts }) => {
+          scripts.forEach(script => {
+              const newScript = document.createElement("script");
+              if (script.src) {
+                  newScript.src = script.src; // Se for um script externo
+                  newScript.async = true;
+              } else {
+                  newScript.textContent = script.textContent; // Se for um script inline
+              }
+              document.body.appendChild(newScript);
+          });
+      });
     }
 
     // Chama a função para carregar todas as seções

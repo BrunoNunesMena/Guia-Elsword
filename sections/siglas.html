@@ -4,35 +4,63 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>siglas</title>
+    <link rel="stylesheet" href="../style.css">
 </head>
 <body>
 
     <div id="main" style="width: auto; display: flex; justify-content: center; min-width: fit-content;" class="p-4 gap-2">
-        <div style="display: inline-block; vertical-align: top; min-width: 260px; height: 530px; overflow: auto;">
-            <div style="display: flex; align-items: center; justify-content: center;" class="gap-3">
-                <p>Flames of Judgement - Foj</p>
-                <img src="https://elwiki.net/w/File:12-7Sword.png"
-                alt="Foj">
+        <div class="gap-3" style="display: flex; flex-direction: column; height: 530px;">
+            <div>Armas</div>
+            <div id="armas" class="itemContainer">
             </div>
-            <div style="display: flex; align-items: center;" class="gap-3">
-                <p>Vestige of Soul - Vos</p>
-                <img src="https://elwiki.net/w/File:15-6_Raid_Weapon_-_Sword.png"
-                alt="Vos">
+            <div>Titulos</div>
+            <div id="titulos" class="itemContainer">
             </div>
-            <div style="display: flex; align-items: center;" class="gap-3">
-                <p>Submergence of Abyss - SoA</p>
-                <img src="https://elwiki.net/wiki/images/4/42/19-4Sword.png?20220901011003"
-                alt="SoA">
-            </div>
-            <div style="display: flex; align-items: center;" class="gap-3">
-                <p>Attack of Steel Machines - Aosm</p>
-                <img src="https://elwiki.net/wiki/images/b/b5/TITLE_2250.png"
-                alt="Aosm">
+            <div>Status</div>
+            <div id="status" class="itemContainer">
             </div>
         </div>
         <img style="vertical-align: top; min-width: 600px; max-width: 900px; flex:1; height: max-content;" src="https://media.discordapp.net/attachments/1330359670384365700/1330359794724372541/dhm6wx4-6fbc31c9-b668-42a8-814c-8545484baa14.webp?ex=67d6341b&is=67d4e29b&hm=5212099b68f5298d317fd6afcf897e12cc5edeb94c40c456a13a632d2932b4f7&format=webp&" 
         alt="siglas">
-        
     </div>
+
+    <script>
+        const armasDiv = document.getElementById("armas");
+        const titulosDiv = document.getElementById("titulos");
+        const statusDiv = document.getElementById("status");
+
+
+        const armas = [
+            { nome: "Flames of Judgement", sigla: "Foj", img: "https://elwiki.net/wiki/images/9/99/12-7Sword.png?20181004002529"},
+            { nome: "Vestige of Soul", sigla: "VoS", img: "https://elwiki.net/wiki/images/0/04/15-6_Raid_Weapon_-_Sword.png?20200813040225"},
+            { nome: "Submergence of Abyss", sigla: "SoA", img: "https://elwiki.net/wiki/images/4/42/19-4Sword.png?20220901011003"}
+        ]
+        const titulos = [
+            { nome: "Attack of Steel Machines", sigla: "AoSM", img: "https://elwiki.net/wiki/images/b/b5/TITLE_2250.png"},
+        ]
+        const status = [
+            { nome: "Combat Power", sigla: "CP", img: "https://media.discordapp.net/attachments/390625662320246792/1350547645587787797/image.png?ex=67d72302&is=67d5d182&hm=eea3f750a9e81653b1033c2d350fc61fd667c1b31391c355c106354fc9e56968&=&format=webp&quality=lossless"},
+        ]
+
+        function adicionarNovoItem( item, container )
+        {
+            container.innerHTML += `
+                <div class="gap-3 itens">
+                    <p>${item.nome} - ${item.sigla}</p>
+                    <img src="${item.img}"
+                    alt="${item.sigla}">
+                </div>
+            `
+        }
+
+        armas.map( (arma) => adicionarNovoItem(arma, armasDiv) )
+        titulos.map( (titulo) => adicionarNovoItem(titulo, titulosDiv) )
+        status.map( (status) => adicionarNovoItem(status, statusDiv) )
+
+    </script>
+    
+
+
 </body>
 </html>
+
